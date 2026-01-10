@@ -73,4 +73,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	int32 GetMaxStackSize(FName ItemID) const;
+
+	UFUNCTION(BlueprintCallable)
+	void AddToStack(int32 Index, int32 Quantity);
 };

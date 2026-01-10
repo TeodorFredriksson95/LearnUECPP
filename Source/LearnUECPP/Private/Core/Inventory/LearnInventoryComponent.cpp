@@ -13,6 +13,11 @@ ULearnInventoryComponent::ULearnInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	FSlotStruct InventoryItem;
+	InventoryItem.Quantity = 1;
+	InventoryItem.ItemID = FName("Apple");
+
+	InventoryItems = TArray<FSlotStruct>{InventoryItem};
 	// ...
 }
 
@@ -56,7 +61,7 @@ bool ULearnInventoryComponent::AddItemToInventory(const FName ItemID, int32 Quan
 		if (FindSlot(ItemID, Index))
 		{
 			// TODO: AddToStack function implementation
-			// AddToStack(Index, Quantity)
+			AddToStack(Index, Quantity);
 
 			// TODO: decrement local quantity
 			// LocalQuantity--;
@@ -104,21 +109,16 @@ bool ULearnInventoryComponent::FindSlot(FName ItemID, int32& OutIndex)
 	return false;
 }
 
+void ULearnInventoryComponent::AddToStack(int32 Index, int32 Quantity)
+{
+	InventoryItems[Index].Quantity += Quantity;
 
-// int32 ULearnInventoryComponent::GetMaxStackSize(FName ItemID, UDataTable* DataTable)
-// {
-// 	if (!DataTable)
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("DataTable is NULL"));
-// 		return -1;
-// 	}
-//
-// 	const FInventoryItem* InventoryItem = DataTable->FindRow<FInventoryItem>(ItemID, "");
-//
-// 	if (!InventoryItem)
-// 	{
-// 		return -1;
-// 	}
-//
-// 	return InventoryItem->StackSize;
-// }
+	FString DebugText = FString::Printf(
+		TEXT("Added %d to inventory"),
+		InventoryItems[Index].Quantity
+	);
+
+	constexpr FLinearColor TextColor = FLinearColor(1.0f, 1.0f, 1.0f);
+
+	UKismetSystemLibrary::PrintString(GetWorld(), DebugText, true, false, TextColor, 4);
+}
