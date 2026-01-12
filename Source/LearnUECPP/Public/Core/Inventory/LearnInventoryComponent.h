@@ -11,6 +11,7 @@ struct FInventoryItem : public FTableRowBase
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText ItemName;
 
@@ -18,13 +19,13 @@ struct FInventoryItem : public FTableRowBase
 	FText Description;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UTexture2D* Thumbnail;
+	UTexture2D* Thumbnail = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AActor> ItemClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 StackSize;
+	int32 StackSize = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -32,11 +33,12 @@ struct FSlotStruct
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(BlueprintReadWrite)
-	FName ItemID;
+	FName ItemID = NAME_None;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 Quantity;
+	int32 Quantity = 0;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -52,6 +54,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FDataTableRowHandle ItemDataTable;
+
+	UPROPERTY(EditAnywhere)
+	int32 InventorySlots = 16;
 
 protected:
 	// Called when the game starts
@@ -76,4 +81,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddToStack(int32 Index, int32 Quantity);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool AnyEmptySlotsAvailable(int32& OutIndex);
 };

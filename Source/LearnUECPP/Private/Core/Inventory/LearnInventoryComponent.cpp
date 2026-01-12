@@ -13,12 +13,17 @@ ULearnInventoryComponent::ULearnInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
+	for (int i = 0; i < InventorySlots; ++i)
+	{
+		InventoryItems[i] = FSlotStruct{};
+	}
+
+
 	FSlotStruct InventoryItem;
 	InventoryItem.Quantity = 1;
 	InventoryItem.ItemID = FName("Apple");
-
-	InventoryItems = TArray<FSlotStruct>{InventoryItem};
-	// ...
+	InventoryItems[0] = InventoryItem;
 }
 
 
@@ -42,6 +47,12 @@ void ULearnInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 bool ULearnInventoryComponent::AddItemToInventory(const FName ItemID, int32 Quantity, int32& OutQuantity)
 {
+	// This entire function should probably be removed from C++ and the entire flow of functions is what defines
+	// the act of "adding to inventory". Looking at the while loop below, it makes no sense to expose
+	// UFUNCTIONS defining different inputs and outputs, and then nesting those functions inside this function.
+	// I'd have to chain every input and output all the way from this function to the last. That'd be insane.
+	// Sleep on it.
+
 	FString DebugText = FString::Printf(
 		TEXT("Added %d %s to inventory"),
 		Quantity,
@@ -60,11 +71,8 @@ bool ULearnInventoryComponent::AddItemToInventory(const FName ItemID, int32 Quan
 	{
 		if (FindSlot(ItemID, Index))
 		{
-			// TODO: AddToStack function implementation
 			AddToStack(Index, Quantity);
-
-			// TODO: decrement local quantity
-			// LocalQuantity--;
+			LocalQuantity--;
 		}
 
 		else
@@ -121,4 +129,19 @@ void ULearnInventoryComponent::AddToStack(int32 Index, int32 Quantity)
 	constexpr FLinearColor TextColor = FLinearColor(1.0f, 1.0f, 1.0f);
 
 	UKismetSystemLibrary::PrintString(GetWorld(), DebugText, true, false, TextColor, 4);
+}
+
+bool ULearnInventoryComponent::AnyEmptySlotsAvailable(int32& OutIndex)
+{
+	for (int i = 0; i < InventoryItems.Num(); ++i)
+	{
+		if (InventoryItems[i].Quantity == 0)
+		{
+			OutIndex = i;
+			return true;
+		}
+	}
+
+	OutIndex = -1;
+	return false;
 }

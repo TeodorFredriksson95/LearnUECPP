@@ -2,7 +2,6 @@
 
 #include "LearnUECPP.h"
 
-#include "FloatingActor.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, LearnUECPP, "LearnUECPP" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, LearnUECPP, "LearnUECPP");
